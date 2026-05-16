@@ -1,0 +1,58 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      Role     @default(USER)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model Lead {
+  id             String   @id @default(cuid())
+  shopName       String
+  ownerName      String?
+  shopAddress    String?
+  city           String?
+  photoUrl       String?
+  facebookPage   String?
+  instagramPage  String?
+  phoneNumber    String?  @unique
+  whatsappNumber String?  @unique
+  email          String?  @unique
+  website        String?
+  emailStatus      MessageStatus @default(PENDING)
+  whatsappStatus   MessageStatus @default(PENDING)
+  emailSentAt      DateTime?
+  whatsappSentAt   DateTime?
+  lastError        String?
+  whatsappMessage  String @default("")
+  emailMessage String @default("")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@map("leads")
+}
+
+enum MessageStatus {
+  PENDING
+  SENT
+  FAILED
+}
