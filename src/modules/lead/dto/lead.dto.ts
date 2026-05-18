@@ -1,16 +1,24 @@
 import { z } from "zod";
-import { id } from "zod/locales";
+
+const bdPhone = z
+  .string()
+  .transform((val) => val.replace(/[^\d]/g, ""))
+  .refine((val) => /^01\d{9}$/.test(val), {
+    message: "Phone must start with 01 and contain exactly 11 digits",
+  })
+  .optional()
+  .nullable();
 
 export const CreateLeadDto = z.object({
   shopName: z.string().min(1, "Shop name is required"),
   ownerName: z.string().optional().nullable(),
   shopAddress: z.string().optional().nullable(),
   city: z.string().optional().nullable(),
-  photoUrl: z.string().url().optional().nullable(),
+  photoUrl: z.string().optional().nullable(),
   facebookPage: z.string().optional().nullable(),
   instagramPage: z.string().optional().nullable(),
-  phoneNumber: z.string().optional().nullable(),
-  whatsappNumber: z.string().optional().nullable(),
+  phoneNumber: bdPhone,
+  whatsappNumber: bdPhone,
   email: z.string().email().optional().nullable(),
   website: z.string().optional().nullable(),
 });
@@ -20,11 +28,11 @@ export const UpdateLeadDto = z.object({
   ownerName: z.string().optional().nullable(),
   shopAddress: z.string().optional().nullable(),
   city: z.string().optional().nullable(),
-  photoUrl: z.string().url().optional().nullable(),
+  photoUrl: z.string().optional().nullable(),
   facebookPage: z.string().optional().nullable(),
   instagramPage: z.string().optional().nullable(),
-  phoneNumber: z.string().optional().nullable(),
-  whatsappNumber: z.string().optional().nullable(),
+  phoneNumber: bdPhone,
+  whatsappNumber: bdPhone,
   email: z.string().email().optional().nullable(),
   website: z.string().optional().nullable(),
 });

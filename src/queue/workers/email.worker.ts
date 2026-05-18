@@ -34,7 +34,7 @@ export const createEmailWorker = (): Worker => {
     const isLastAttempt = job.attemptsMade >= (job.opts.attempts ?? 3);
 
     if (isLastAttempt) {
-      await prisma.Lead.update({
+      await prisma.lead.update({
         where: { id: job.data.leadId },
         data: {
           emailStatus: "FAILED",

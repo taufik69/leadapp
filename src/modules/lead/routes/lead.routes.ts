@@ -5,13 +5,13 @@ import { CreateLeadDto, UpdateLeadDto, LeadIdParamDto } from "../dto/lead.dto";
 
 const router = Router();
 
+router.post("/leads", validate(CreateLeadDto), leadController.create);
 router.get("/leads", leadController.getAll);
 router.get(
   "/leads/:id",
   validate(LeadIdParamDto, "params"),
   leadController.getById,
 );
-router.post("/leads", validate(CreateLeadDto), leadController.create);
 router.patch(
   "/leads/:id",
   validate(LeadIdParamDto, "params"),

@@ -7,11 +7,9 @@ export const leadRepository = {
       orderBy: { createdAt: "desc" },
     }),
 
-  findById: (id: string) =>
-    prisma.lead.findUnique({ where: { id } }),
+  findById: (id: string) => prisma.lead.findUnique({ where: { id } }),
 
-  create: (data: CreateLeadInput) =>
-    prisma.lead.create({ data }),
+  create: (data: CreateLeadInput) => prisma.lead.create({ data }),
 
   update: (id: string, data: UpdateLeadInput) =>
     prisma.lead.update({ where: { id }, data }),
@@ -24,7 +22,7 @@ export const leadRepository = {
       emailSentAt?: Date;
       whatsappSentAt?: Date;
       lastError?: string | null;
-    }
+    },
   ) => prisma.lead.update({ where: { id }, data }),
 
   delete: (id: string) => prisma.lead.delete({ where: { id } }),
