@@ -12,3 +12,10 @@ export interface WhatsAppJobData {
   shopName: string;
   ownerName?: string | null;
 }
+
+export interface SmsJobData {
+  leadId: string;
+  phoneNumber: string;
+  shopName: string;
+  ownerName?: string | null;
+}

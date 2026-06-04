@@ -3,6 +3,7 @@ import { JobsOptions } from "bullmq";
 export const QUEUES = {
   EMAIL: "email-queue",
   WHATSAPP: "whatsapp-queue",
+  SMS: "sms-queue",
 } as const;
 
 export const defaultJobOptions: JobsOptions = {

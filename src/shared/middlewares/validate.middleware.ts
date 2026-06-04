@@ -7,13 +7,18 @@ type ValidateTarget = "body" | "query" | "params";
 const snakeToCamel = (str: string): string =>
   str.replace(/_([a-z])/g, (_, c) => c.toUpperCase());
 
+const normalizeValue = (v: unknown): unknown => {
+  if (typeof v === "string" && (v.trim() === "N/A" || v.trim() === "n/a" || v.trim() === "")) return null;
+  return v;
+};
+
 const convertKeys = (obj: unknown): unknown => {
   if (Array.isArray(obj)) return obj.map(convertKeys);
   if (obj !== null && typeof obj === "object") {
     return Object.fromEntries(
       Object.entries(obj as Record<string, unknown>).map(([k, v]) => [
         snakeToCamel(k),
-        convertKeys(v),
+        convertKeys(normalizeValue(v)),
       ])
     );
   }

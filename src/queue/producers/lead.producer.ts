@@ -1,7 +1,7 @@
 import { Queue } from "bullmq";
 import redisConnection from "../config/redis.config";
 import { QUEUES, defaultJobOptions } from "../config/queue.config";
-import { EmailJobData, WhatsAppJobData } from "../jobs/lead.job.types";
+import { EmailJobData, WhatsAppJobData, SmsJobData } from "../jobs/lead.job.types";
 
 const emailQueue = new Queue<EmailJobData>(QUEUES.EMAIL, {
   connection: redisConnection,
@@ -9,6 +9,11 @@ const emailQueue = new Queue<EmailJobData>(QUEUES.EMAIL, {
 });
 
 const whatsappQueue = new Queue<WhatsAppJobData>(QUEUES.WHATSAPP, {
+  connection: redisConnection,
+  defaultJobOptions,
+});
+
+const smsQueue = new Queue<SmsJobData>(QUEUES.SMS, {
   connection: redisConnection,
   defaultJobOptions,
 });
@@ -33,7 +38,7 @@ export const dispatchLeadJobs = async (lead: LeadJobPayload): Promise<void> => {
         shopName: lead.shopName,
         ownerName: lead.ownerName,
         phoneNumber: lead.phoneNumber,
-      })
+      }),
     );
   }
 
@@ -45,7 +50,18 @@ export const dispatchLeadJobs = async (lead: LeadJobPayload): Promise<void> => {
         phoneNumber: whatsappPhone,
         shopName: lead.shopName,
         ownerName: lead.ownerName,
-      })
+      }),
+    );
+  }
+
+  if (lead.phoneNumber) {
+    jobs.push(
+      smsQueue.add("send-sms", {
+        leadId: lead.leadId,
+        phoneNumber: lead.phoneNumber,
+        shopName: lead.shopName,
+        ownerName: lead.ownerName,
+      }),
     );
   }
 

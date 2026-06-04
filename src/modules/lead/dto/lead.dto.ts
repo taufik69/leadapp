@@ -2,12 +2,15 @@ import { z } from "zod";
 
 const bdPhone = z
   .string()
-  .transform((val) => val.replace(/[^\d]/g, ""))
-  .refine((val) => /^01\d{9}$/.test(val), {
-    message: "Phone must start with 01 and contain exactly 11 digits",
-  })
+  .nullable()
   .optional()
-  .nullable();
+  .transform((val) => {
+    if (!val) return null;
+    return val.replace(/[^\d]/g, "");
+  })
+  .refine((val) => val === null || val === undefined || /^01\d{9}$/.test(val), {
+    message: "Phone must start with 01 and contain exactly 11 digits",
+  });
 
 export const CreateLeadDto = z.object({
   shopName: z.string().min(1, "Shop name is required"),

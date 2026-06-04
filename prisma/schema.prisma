@@ -26,7 +26,7 @@ enum Role {
 }
 
 model Lead {
-  id             String   @id @default(cuid())
+  id             String        @id @default(cuid())
   shopName       String
   ownerName      String?
   shopAddress    String?
@@ -34,19 +34,26 @@ model Lead {
   photoUrl       String?
   facebookPage   String?
   instagramPage  String?
-  phoneNumber    String?  @unique
-  whatsappNumber String?  @unique
-  email          String?  @unique
+  phoneNumber    String?
+  whatsappNumber String?
+  email          String?       @unique
   website        String?
-  emailStatus      MessageStatus @default(PENDING)
-  whatsappStatus   MessageStatus @default(PENDING)
-  emailSentAt      DateTime?
-  whatsappSentAt   DateTime?
-  lastError        String?
-  whatsappMessage  String @default("")
-  emailMessage String @default("")
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+
+  emailStatus    MessageStatus @default(PENDING)
+  emailMessage   String        @default("")
+  emailSentAt    DateTime?
+
+  whatsappStatus  MessageStatus @default(PENDING)
+  whatsappMessage String        @default("")
+  whatsappSentAt  DateTime?
+
+  smsStatus      MessageStatus @default(PENDING)
+  smsSentAt      DateTime?
+
+  lastError      String?
+
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
 
   @@map("leads")
 }
