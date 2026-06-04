@@ -2,5 +2,9 @@ node_modules/
 dist/
 .env
 *.log
+.wwebjs_auth/
+.wwebjs_cache/
 
 /src/generated/prisma
+.wwebjs_auth
+.wwebjs_cache
