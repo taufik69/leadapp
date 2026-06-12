@@ -8,6 +8,7 @@ import {
 } from "./shared/middlewares/error-handler.middleware";
 import userRoutes from "./modules/user/routes/user.routes";
 import leadRoutes from "./modules/lead/routes/lead.routes";
+import conversationRoutes from "./modules/conversation/routes/conversation.routes";
 
 const app: Application = express();
 
@@ -30,6 +31,7 @@ app.get("/health", (req, res) => {
 // API routes
 app.use("/api/v1/users", userRoutes);
 app.use("/api/v1", leadRoutes);
+app.use("/api/v1", conversationRoutes);
 
 // 404 handler
 app.use(notFoundHandler);

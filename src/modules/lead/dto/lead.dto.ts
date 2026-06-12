@@ -38,6 +38,7 @@ export const UpdateLeadDto = z.object({
   whatsappNumber: bdPhone,
   email: z.string().email().optional().nullable(),
   website: z.string().optional().nullable(),
+  whatsappMessage: z.string().optional(),
 });
 
 export const BulkLeadDto = z.object({

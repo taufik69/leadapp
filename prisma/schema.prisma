@@ -52,10 +52,23 @@ model Lead {
 
   lastError      String?
 
+  whatsappMessages WhatsAppMessage[]
+
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
 
   @@map("leads")
+}
+
+model WhatsAppMessage {
+  id        String   @id @default(cuid())
+  leadId    String
+  lead      Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  direction String   // "INBOUND" | "OUTBOUND"
+  body      String
+  sentAt    DateTime @default(now())
+
+  @@map("whatsapp_messages")
 }
 
 enum MessageStatus {

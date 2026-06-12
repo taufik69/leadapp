@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "Bash(git init)",
-      "WebSearch"
+      "WebSearch",
+      "Bash(npm install *)"
     ]
   }
 }

@@ -6,51 +6,145 @@ import {
   flexRender,
   createColumnHelper,
   type SortingState,
-} from '@tanstack/react-table';
-import { useState } from 'react';
-import { ChevronUp, ChevronDown, ChevronsUpDown, ChevronLeft, ChevronRight } from 'lucide-react';
-import Badge from '../ui/Badge';
-import type { Lead } from '../../types/lead';
+} from "@tanstack/react-table";
+import { useState } from "react";
+import {
+  ChevronUp,
+  ChevronDown,
+  ChevronsUpDown,
+  ChevronLeft,
+  ChevronRight,
+  MessageCircle,
+  Pencil,
+  Trash2,
+} from "lucide-react";
+import Badge from "../ui/Badge";
+import type { Lead } from "../../types/lead";
 
 const col = createColumnHelper<Lead>();
 
 const fmt = (d: string | null) =>
-  d ? new Date(d).toLocaleString('en-BD', { timeZone: 'Asia/Dhaka', dateStyle: 'short', timeStyle: 'short' }) : '—';
+  d
+    ? new Date(d).toLocaleString("en-BD", {
+        timeZone: "Asia/Dhaka",
+        dateStyle: "short",
+        timeStyle: "short",
+      })
+    : "—";
 
-const columns = [
-  col.accessor('shopName', { header: 'Shop Name', cell: (i) => <span className="font-medium text-gray-900">{i.getValue()}</span> }),
-  col.accessor('ownerName', { header: 'Owner', cell: (i) => i.getValue() ?? '—' }),
-  col.accessor('phoneNumber', { header: 'Phone', cell: (i) => i.getValue() ?? '—' }),
-  col.accessor('whatsappNumber', { header: 'WA Number', cell: (i) => i.getValue() ?? '—' }),
-  col.accessor('whatsappStatus', {
-    header: 'WA Status',
-    cell: (i) => <Badge status={i.getValue()} />,
-  }),
-  col.accessor('whatsappSentAt', { header: 'WA Sent At', cell: (i) => fmt(i.getValue()), enableSorting: false }),
-  col.accessor('smsStatus', {
-    header: 'SMS Status',
-    cell: (i) => <Badge status={i.getValue()} />,
-  }),
-  col.accessor('smsSentAt', { header: 'SMS Sent At', cell: (i) => fmt(i.getValue()), enableSorting: false }),
-  col.accessor('lastError', {
-    header: 'Error',
-    enableSorting: false,
-    cell: (i) => {
-      const err = i.getValue();
-      if (!err) return <span className="text-gray-300">—</span>;
-      return (
-        <span title={err} className="text-red-600 text-xs cursor-help max-w-[180px] block truncate">
-          {err}
-        </span>
-      );
-    },
-  }),
-];
+interface Props {
+  data: Lead[];
+  newReplies: Set<string>;
+  onChat: (lead: Lead) => void;
+  onEdit: (lead: Lead) => void;
+  onDelete: (lead: Lead) => void;
+}
 
-interface Props { data: Lead[] }
-
-export default function SendListTable({ data }: Props) {
+export default function SendListTable({
+  data,
+  newReplies,
+  onChat,
+  onEdit,
+  onDelete,
+}: Props) {
   const [sorting, setSorting] = useState<SortingState>([]);
+
+  const columns = [
+    col.accessor("shopName", {
+      header: "Shop Name",
+      cell: (i) => (
+        <span className="font-medium text-gray-900">{i.getValue()}</span>
+      ),
+    }),
+    col.accessor("ownerName", {
+      header: "Owner",
+      cell: (i) => i.getValue() ?? "—",
+    }),
+    col.accessor("phoneNumber", {
+      header: "Phone",
+      cell: (i) => i.getValue() ?? "—",
+    }),
+    col.accessor("whatsappNumber", {
+      header: "WA Number",
+      cell: (i) => i.getValue() ?? "—",
+    }),
+    col.accessor("whatsappStatus", {
+      header: "WA Status",
+      cell: (i) => <Badge status={i.getValue()} />,
+    }),
+    col.accessor("whatsappSentAt", {
+      header: "WA Sent At",
+      cell: (i) => fmt(i.getValue()),
+      enableSorting: false,
+    }),
+    col.accessor("smsStatus", {
+      header: "SMS Status",
+      cell: (i) => <Badge status={i.getValue()} />,
+    }),
+    col.accessor("smsSentAt", {
+      header: "SMS Sent At",
+      cell: (i) => fmt(i.getValue()),
+      enableSorting: false,
+    }),
+    col.accessor("lastError", {
+      header: "Error",
+      enableSorting: false,
+      cell: (i) => {
+        const err = i.getValue();
+        if (!err) return <span className="text-gray-300">—</span>;
+        return (
+          <span
+            title={err}
+            className="text-red-600 text-xs cursor-help max-w-40 block truncate"
+          >
+            {err}
+          </span>
+        );
+      },
+    }),
+    col.display({
+      id: "actions",
+      header: "Actions",
+      enableSorting: false,
+      cell: ({ row }) => {
+        const lead = row.original;
+        const hasNew = newReplies.has(lead.id);
+        return (
+          <div className="flex items-center gap-1.5">
+            {/* Chat */}
+            <button
+              onClick={() => onChat(lead)}
+              title="Open conversation"
+              className="relative p-1.5 rounded-lg text-green-700 bg-green-50 hover:bg-green-100 transition-colors"
+            >
+              <MessageCircle size={14} />
+              {hasNew && (
+                <span className="absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full bg-red-500 border border-white" />
+              )}
+            </button>
+
+            {/* Edit */}
+            <button
+              onClick={() => onEdit(lead)}
+              title="Edit lead"
+              className="p-1.5 rounded-lg text-blue-700 bg-blue-50 hover:bg-blue-100 transition-colors"
+            >
+              <Pencil size={14} />
+            </button>
+
+            {/* Delete */}
+            <button
+              onClick={() => onDelete(lead)}
+              title="Delete lead"
+              className="p-1.5 rounded-lg text-red-600 bg-red-50 hover:bg-red-100 transition-colors"
+            >
+              <Trash2 size={14} />
+            </button>
+          </div>
+        );
+      },
+    }),
+  ];
 
   const table = useReactTable({
     data,
@@ -60,13 +154,19 @@ export default function SendListTable({ data }: Props) {
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
-    initialState: { pagination: { pageSize: 20 } },
+    initialState: { pagination: { pageSize: 25 } },
   });
 
-  const SortIcon = ({ isSorted, canSort }: { isSorted: false | 'asc' | 'desc'; canSort: boolean }) => {
+  const SortIcon = ({
+    isSorted,
+    canSort,
+  }: {
+    isSorted: false | "asc" | "desc";
+    canSort: boolean;
+  }) => {
     if (!canSort) return null;
-    if (isSorted === 'asc') return <ChevronUp size={13} />;
-    if (isSorted === 'desc') return <ChevronDown size={13} />;
+    if (isSorted === "asc") return <ChevronUp size={13} />;
+    if (isSorted === "desc") return <ChevronDown size={13} />;
     return <ChevronsUpDown size={13} className="opacity-40" />;
   };
 
@@ -81,11 +181,21 @@ export default function SendListTable({ data }: Props) {
                   <th
                     key={header.id}
                     onClick={header.column.getToggleSortingHandler()}
-                    className={`px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wide whitespace-nowrap select-none ${header.column.getCanSort() ? 'cursor-pointer hover:bg-gray-100' : ''}`}
+                    className={`px-3 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wide whitespace-nowrap select-none ${
+                      header.column.getCanSort()
+                        ? "cursor-pointer hover:bg-gray-100"
+                        : ""
+                    }`}
                   >
                     <div className="flex items-center gap-1">
-                      {flexRender(header.column.columnDef.header, header.getContext())}
-                      <SortIcon isSorted={header.column.getIsSorted()} canSort={header.column.getCanSort()} />
+                      {flexRender(
+                        header.column.columnDef.header,
+                        header.getContext(),
+                      )}
+                      <SortIcon
+                        isSorted={header.column.getIsSorted()}
+                        canSort={header.column.getCanSort()}
+                      />
                     </div>
                   </th>
                 ))}
@@ -95,7 +205,10 @@ export default function SendListTable({ data }: Props) {
           <tbody className="divide-y divide-gray-100">
             {table.getRowModel().rows.length === 0 ? (
               <tr>
-                <td colSpan={columns.length} className="px-4 py-8 text-center text-gray-400 text-sm">
+                <td
+                  colSpan={columns.length}
+                  className="px-4 py-8 text-center text-gray-400 text-sm"
+                >
                   No results found.
                 </td>
               </tr>
@@ -103,8 +216,14 @@ export default function SendListTable({ data }: Props) {
               table.getRowModel().rows.map((row) => (
                 <tr key={row.id} className="hover:bg-gray-50">
                   {row.getVisibleCells().map((cell) => (
-                    <td key={cell.id} className="px-4 py-3 text-gray-700 whitespace-nowrap">
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    <td
+                      key={cell.id}
+                      className="px-3 py-3 text-gray-700 whitespace-nowrap"
+                    >
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext(),
+                      )}
                     </td>
                   ))}
                 </tr>
@@ -116,7 +235,8 @@ export default function SendListTable({ data }: Props) {
 
       <div className="flex items-center justify-between px-4 py-3 border-t border-gray-200 bg-gray-50">
         <span className="text-sm text-gray-500">
-          Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()} — {data.length} total
+          Page {table.getState().pagination.pageIndex + 1} of{" "}
+          {table.getPageCount()} — {data.length} total
         </span>
         <div className="flex items-center gap-2">
           <button

@@ -1,5 +1,13 @@
 export type MessageStatus = 'PENDING' | 'SENT' | 'FAILED';
 
+export interface WhatsAppMessage {
+  id: string;
+  leadId: string;
+  direction: 'INBOUND' | 'OUTBOUND';
+  body: string;
+  sentAt: string;
+}
+
 export interface Lead {
   id: string;
   shopName: string;

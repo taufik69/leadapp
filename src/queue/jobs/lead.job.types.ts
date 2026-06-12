@@ -12,6 +12,7 @@ export interface WhatsAppJobData {
   shopName: string;
   ownerName?: string | null;
   whatsappMessage?: string | null;
+  source?: "initial" | "reply";
 }
 
 export interface SmsJobData {
