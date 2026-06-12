@@ -1,11 +1,12 @@
 import { Router } from "express";
 import { leadController } from "../controller/lead.controller";
 import { validate } from "../../../shared/middlewares/validate.middleware";
-import { CreateLeadDto, UpdateLeadDto, LeadIdParamDto } from "../dto/lead.dto";
+import { BulkLeadDto, CreateLeadDto, UpdateLeadDto, LeadIdParamDto } from "../dto/lead.dto";
 
 const router = Router();
 
 router.post("/leads", validate(CreateLeadDto), leadController.create);
+router.post("/leads/bulk", validate(BulkLeadDto), leadController.bulkCreate);
 router.get("/leads", leadController.getAll);
 router.get(
   "/leads/:id",

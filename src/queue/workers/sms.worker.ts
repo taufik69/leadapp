@@ -9,10 +9,11 @@ export const createSmsWorker = (): Worker => {
   const worker = new Worker<SmsJobData>(
     QUEUES.SMS,
     async (job: Job<SmsJobData>) => {
-      const { leadId, phoneNumber, shopName, ownerName } = job.data;
+      const { leadId, phoneNumber, shopName, ownerName, smsMessage } = job.data;
+
       console.log(`[SMS Worker] Processing job ${job.id} for lead ${leadId}`);
 
-      const message = buildSmsMessage(shopName, ownerName);
+      const message = smsMessage?.trim() || buildSmsMessage(shopName, ownerName);
       await sendSms(phoneNumber, message);
 
       await prisma.lead.update({

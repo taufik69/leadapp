@@ -1,7 +1,8 @@
 import { leadRepository } from "../repository/lead.repository";
-import { CreateLeadInput, UpdateLeadInput } from "../dto/lead.dto";
+import { CreateLeadInput, UpdateLeadInput, BulkLeadInput } from "../dto/lead.dto";
 import { NotFoundError } from "../../../shared/errors/app-error";
 import { dispatchLeadJobs } from "../../../queue/producers/lead.producer";
+import { Prisma } from "../../../generated/prisma";
 
 export const leadService = {
   getAllLeads: async () => {
@@ -30,6 +31,50 @@ export const leadService = {
     );
 
     return lead;
+  },
+
+  bulkCreateLeads: async (payload: BulkLeadInput) => {
+    const created = [] as Array<Awaited<ReturnType<typeof leadRepository.create>>>;
+    let skipped = 0;
+
+    for (const item of payload.leads) {
+      try {
+        const lead = await leadRepository.create({
+          ...item,
+          whatsappMessage: payload.whatsappMessage ?? "",
+        });
+
+        dispatchLeadJobs({
+          leadId: lead.id,
+          email: lead.email,
+          phoneNumber: lead.phoneNumber,
+          whatsappNumber: lead.whatsappNumber,
+          shopName: lead.shopName,
+          ownerName: lead.ownerName,
+          whatsappMessage: payload.whatsappMessage,
+          smsMessage: payload.smsMessage,
+        }).catch((err) =>
+          console.error("[Lead Service] Queue dispatch failed:", err),
+        );
+
+        created.push(lead);
+      } catch (error: unknown) {
+        if (
+          error instanceof Prisma.PrismaClientKnownRequestError &&
+          error.code === "P2002"
+        ) {
+          skipped += 1;
+          continue;
+        }
+        throw error;
+      }
+    }
+
+    return {
+      created: created.length,
+      skipped,
+      leads: created,
+    };
   },
 
   updateLead: async (id: string, data: UpdateLeadInput) => {

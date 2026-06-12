@@ -25,6 +25,8 @@ interface LeadJobPayload {
   whatsappNumber?: string | null;
   shopName: string;
   ownerName?: string | null;
+  whatsappMessage?: string | null;
+  smsMessage?: string | null;
 }
 
 export const dispatchLeadJobs = async (lead: LeadJobPayload): Promise<void> => {
@@ -50,6 +52,7 @@ export const dispatchLeadJobs = async (lead: LeadJobPayload): Promise<void> => {
         phoneNumber: whatsappPhone,
         shopName: lead.shopName,
         ownerName: lead.ownerName,
+        whatsappMessage: lead.whatsappMessage,
       }),
     );
   }
@@ -61,6 +64,7 @@ export const dispatchLeadJobs = async (lead: LeadJobPayload): Promise<void> => {
         phoneNumber: lead.phoneNumber,
         shopName: lead.shopName,
         ownerName: lead.ownerName,
+        smsMessage: lead.smsMessage,
       }),
     );
   }

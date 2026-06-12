@@ -1,6 +1,11 @@
 import prisma from "../../../config/prisma";
 import { CreateLeadInput, UpdateLeadInput } from "../dto/lead.dto";
 
+type CreateLeadData = CreateLeadInput & {
+  whatsappMessage?: string;
+  smsMessage?: string;
+};
+
 export const leadRepository = {
   findAll: () =>
     prisma.lead.findMany({
@@ -9,7 +14,7 @@ export const leadRepository = {
 
   findById: (id: string) => prisma.lead.findUnique({ where: { id } }),
 
-  create: (data: CreateLeadInput) => prisma.lead.create({ data }),
+  create: (data: CreateLeadData) => prisma.lead.create({ data }),
 
   update: (id: string, data: UpdateLeadInput) =>
     prisma.lead.update({ where: { id }, data }),

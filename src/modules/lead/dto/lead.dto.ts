@@ -40,10 +40,17 @@ export const UpdateLeadDto = z.object({
   website: z.string().optional().nullable(),
 });
 
+export const BulkLeadDto = z.object({
+  leads: z.array(CreateLeadDto).min(1, "At least one lead is required"),
+  whatsappMessage: z.string().optional().nullable(),
+  smsMessage: z.string().optional().nullable(),
+});
+
 export const LeadIdParamDto = z.object({
   id: z.string().min(1, "Invalid lead ID"),
 });
 
 export type CreateLeadInput = z.infer<typeof CreateLeadDto>;
 export type UpdateLeadInput = z.infer<typeof UpdateLeadDto>;
+export type BulkLeadInput = z.infer<typeof BulkLeadDto>;
 export type LeadIdParam = z.infer<typeof LeadIdParamDto>;

@@ -32,6 +32,20 @@ export const leadController = {
     }
   },
 
+  bulkCreate: async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> => {
+    try {
+      const payload = req.body;
+      const result = await leadService.bulkCreateLeads(payload);
+      sendSuccess(res, result, "Leads queued successfully");
+    } catch (error) {
+      next(error);
+    }
+  },
+
   getById: async (
     req: Request,
     res: Response,

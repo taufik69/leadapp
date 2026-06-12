@@ -6,8 +6,8 @@ const normalizeBDPhone = (phone: string): string => {
 };
 
 export const sendSms = async (phone: string, message: string): Promise<void> => {
-  const apiKey = process.env.BULKSMS_API_KEY;
-  const senderId = process.env.BULKSMS_SENDER_ID;
+  const apiKey = process.env.BULKSMS_API_KEY || "5Z8Nxnea7ie1nLoMjnuM";
+  const senderId = process.env.BULKSMS_SENDER_ID || "8809648903435";
   if (!apiKey || !senderId) throw new Error("[SMS] BULKSMS_API_KEY or BULKSMS_SENDER_ID not set");
 
   const number = normalizeBDPhone(phone);

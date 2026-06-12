@@ -9,11 +9,11 @@ export const createWhatsAppWorker = (): Worker => {
   const worker = new Worker<WhatsAppJobData>(
     QUEUES.WHATSAPP,
     async (job: Job<WhatsAppJobData>) => {
-      const { leadId, phoneNumber, shopName, ownerName } = job.data;
+      const { leadId, phoneNumber, shopName, ownerName, whatsappMessage } = job.data;
 
       console.log(`[WhatsApp Worker] Processing job ${job.id} for lead ${leadId}`);
 
-      const message = buildWhatsAppMessage(shopName, ownerName);
+      const message = whatsappMessage?.trim() || buildWhatsAppMessage(shopName, ownerName);
       await sendWhatsAppMessage(phoneNumber, message);
 
       await prisma.lead.update({
