@@ -8,3 +8,4 @@ dist/
 /src/generated/prisma
 .wwebjs_auth
 .wwebjs_cache
+.early.coverage
